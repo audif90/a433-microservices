@@ -1,0 +1,28 @@
+# Opsional, namun kita menerapkan versi 3.9 pada docker-compose
+version: '3.9'
+
+# Berisikan service-service yang akan terpasang
+services:
+
+# Service item app
+# Menggunakan image item-app:v1, mengekspos port 80 yang di map ke port 8080 dalam container, dan menunggu item-db menyala sebelum item-app nyala. 
+  item-app:
+    image: ghcr.io/audif90/item-app:v1
+    ports:
+      - 80:8080
+    depends_on:
+      - item-db
+# Menerapkan saran container akan terus restart bila mati
+    restarts: always
+
+# Service item db
+# Menggunakan image mongo 3, melakukan mounting volume app-db ke /data/db.
+  item-db:
+    image: mongo:3
+    volumes: app-db:/data/db
+# Menerapkan saran container akan terus restart bila mati
+    restarts: always
+
+# Mendefinisikan volume app-db untuk di mount oleh item-db
+volumes:
+  app-db:

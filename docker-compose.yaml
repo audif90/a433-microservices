@@ -11,7 +11,7 @@ services:
     ports:
       - 80:8080
     depends_on:
-      - item-db
+      - "item-db"
 # Menerapkan saran container akan terus restart bila mati
     restart: always
 

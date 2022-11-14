@@ -17,7 +17,7 @@ docker tag $(docker image ls --filter="reference=item-app:v1" --format={{.ID}}) 
 
 # Login ke Github Packages
 echo -e "\e[32mLogin to Github Packages!\e[0m"
-echo "$CR_PAT" | docker login ghcr.io --username audif90 --password-stdin
+echo $CR_PAT | docker login ghcr.io -u audif90 --password-stdin
 
 # Push image ke Github Packages
 echo -e "\e[32mPushing to Github Packages!\e[0m"

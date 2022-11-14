@@ -13,15 +13,15 @@ services:
     depends_on:
       - item-db
 # Menerapkan saran container akan terus restart bila mati
-    restarts: always
+    restart: always
 
 # Service item db
 # Menggunakan image mongo 3, melakukan mounting volume app-db ke /data/db.
   item-db:
     image: mongo:3
-    volumes: app-db:/data/db
+    volumes: [app-db:/data/db]
 # Menerapkan saran container akan terus restart bila mati
-    restarts: always
+    restart: always
 
 # Mendefinisikan volume app-db untuk di mount oleh item-db
 volumes:

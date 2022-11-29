@@ -1,0 +1,31 @@
+version: 2.1
+
+orbs:
+  hadolint: orbies/hadolint@1.0.0
+
+jobs:
+  lint-dockerfile:
+    executor: hadolint
+    steps:
+    - checkout
+    - run:
+        name: Check Dockerfile
+        command: hadolint `find . -type f -name Dockerfile | xargs readlink -f` &> report.json
+    - run:
+        name: Print Report
+        command: cat report.json
+        when: on_fail
+  build-app-karsajobs-ui:
+    docker:
+      - image: cimg/base
+    steps:
+      - checkout
+      - run:
+          name: Build docker image
+          command: docker build -t ghcr.io/audif90/karsajobs:latest .
+      - run:
+          name: Login to GitHub Packages
+          command: docker login ghcr.io -u $USERNAME --password-stdin
+      - run:
+          name: Push to GitHub Packages
+          command: docker push ghcr.io/audif90/karsajobs-ui:latest

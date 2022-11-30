@@ -1,11 +1,9 @@
 version: 2.1
 
-orbs:
-  hadolint: orbies/hadolint@1.0.0
-
 jobs:
   lint-dockerfile:
-    executor: hadolint
+    docker:
+      - image: 'hadolint/hadolint:latest'
     steps:
     - checkout
     - run:
@@ -17,7 +15,7 @@ jobs:
         when: on_fail
   build-app-karsajobs-ui:
     docker:
-      - image: cimg/base
+      - image: cimg/:latest
     steps:
       - checkout
       - run:
@@ -29,3 +27,12 @@ jobs:
       - run:
           name: Push to GitHub Packages
           command: docker push ghcr.io/audif90/karsajobs-ui:latest
+
+
+workflows:
+  lint_and_build:
+    jobs:
+      - lint-dockerfile
+      - build-app-karsajobs-ui
+
+# VS Code Extension Version: 1.2.0

@@ -3,21 +3,19 @@ version: 2.1
 jobs:
   lint-dockerfile:
     docker:
-      - image: 'hadolint/hadolint:latest'
+      - image: docker:stable
     steps:
     - checkout
+    - setup_remote_docker
     - run:
-        name: Check Dockerfile
-        command: hadolint `find . -type f -name Dockerfile | xargs readlink -f` &> report.json
-    - run:
-        name: Print Report
-        command: cat report.json
-        when: on_fail
+        name: Run Hadolint
+        command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile 
   build-app-karsajobs-ui:
     docker:
       - image: cimg/:latest
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Build docker image
           command: docker build -t ghcr.io/audif90/karsajobs:latest .

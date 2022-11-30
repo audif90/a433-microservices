@@ -1,0 +1,46 @@
+version: 2.1
+
+orbs:
+  hadolint: orbies/hadolint@1.0.0
+  tools: gotest/tools@0.0.14
+
+executors:
+  hadolint:
+    docker:
+      - image: hadolint/hadolint:latest
+
+jobs:
+  lint-dockerfile:
+    executor: hadolint
+    steps:
+      - checkout
+      - run:
+          name: Check Dockerfile
+          command: hadolint `find . -type f -name Dockerfile | xargs readlink -f` &> report.json
+      - run:
+          name: Print Report
+          command: cat report.json
+          when: on_fail
+
+  test-app:
+    docker:
+      - image: cimg/go:1.19.3
+    steps:
+      - checkout
+      - run:
+          name: run tests
+          command: go test -v -short --count=1 $(go list ./...)
+
+  build-app-karsajobs:
+    docker:
+      - image: cimg/go:1.19.3
+    steps:
+      - checkout
+      - run:
+          name: build docker image
+          command: docker build -t ghcr.io/audif90/karsajobs:latest .
+      - run:
+          name: push to GitHub Packages
+          command: docker push ghcr.io/audif90/karsajobs:latest
+    
+  

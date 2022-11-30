@@ -1,45 +1,76 @@
+# Menggunakan versi 2.1
+
 version: 2.1
 
+# List jobs
 jobs:
+
+# Job pertama - Linting dockerfile
   lint-dockerfile:
+
+# Menggunakan image docker stable
     docker:
       - image: docker:stable
+
+# Step2 dalam job linting dockerfile
     steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Run Hadolint
-          command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile
+# Git checkout
+    - checkout
+# Setup docker environment
+    - setup_remote_docker
+# Running hadolint
+    - run:
+        name: Run Hadolint
+        command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile
+  
+# Job test app
   test-app:
+
+# Menggunakan image cimg go
     docker:
       - image: cimg/go:1.19.3
+# Step2 dalam job testing
     steps:
+# Git checkout
       - checkout
+# Run golang test
       - run:
           name: run tests
           command: go test -v -short --count=1 $(go list ./...)
 
-  build-app-karsajobs:
+# Job build and deploy karsajobs
+  build-and-deploy-karsajobs:
+
+# Menggunakan image cimg/go
     docker:
       - image: cimg/go:1.19.3
     steps:
+# Git Checkout
       - checkout
+# Setup Docker env
       - setup_remote_docker
+# Build docker image
       - run:
           name: build docker image
           command: docker build -t ghcr.io/audif90/karsajobs:latest .
+# Authenticate ke GH Packages
       - run:
           name: Authenticate to GitHub Packages
           command: echo "${CR_PAT}" | docker login ghcr.io -u "${USERNAME}" --password-stdin
+# Push ke GH Packages
       - run:
           name: push to GitHub Packages
           command: docker push ghcr.io/audif90/karsajobs:latest
     
+
+# Workflow
 workflows:
-  lint_and_test:
+
+# Dalam workflow lint_test_build_deploy, ada job lint test dan build deploy
+  lint_test_build_deploy:
     jobs:
       - lint-dockerfile
       - test-app
-      - build-app-karsajobs
+      - build-and-deploy-karsajobs
 
 # VS Code Extension Version: 1.2.0

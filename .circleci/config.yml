@@ -1,17 +1,9 @@
 version: 2.1
 
-orbs:
-  hadolint: orbies/hadolint@1.0.0
-  tools: gotest/tools@0.0.14
-
-executors:
-  hadolint:
-    docker:
-      - image: hadolint/hadolint:latest
-
 jobs:
   lint-dockerfile:
-    executor: hadolint
+    docker:
+      - image: 'hadolint/hadolint:latest'
     steps:
       - checkout
       - run:
@@ -43,4 +35,13 @@ jobs:
           name: push to GitHub Packages
           command: docker push ghcr.io/audif90/karsajobs:latest
     
-  
+workflows:
+  lint_and_test:
+    jobs:
+      - lint-dockerfile
+      - test-app
+  build_and_publish:
+    jobs:
+      - build-app-karsajobs
+
+# VS Code Extension Version: 1.2.0

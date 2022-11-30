@@ -26,7 +26,7 @@ jobs:
         command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile 
 
 # Job kedua - Build dan deploy karsajobs ui
-  build-and-deploy-karsajobs-ui:
+  build-app-karsajobs-ui:
 
 # Menggunakan image cimg/base 22.04lts
     docker:
@@ -60,6 +60,6 @@ workflows:
   lint_and_build:
     jobs:
       - lint-dockerfile
-      - build-and-deploy-karsajobs-ui
+      - build-app-karsajobs-ui
 
 # VS Code Extension Version: 1.2.0

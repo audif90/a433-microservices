@@ -39,7 +39,7 @@ jobs:
           command: go test -v -short --count=1 $(go list ./...)
 
 # Job build and deploy karsajobs
-  build-and-deploy-karsajobs:
+  build-app-karsajobs:
 
 # Menggunakan image cimg/go
     docker:
@@ -71,6 +71,6 @@ workflows:
     jobs:
       - lint-dockerfile
       - test-app
-      - build-and-deploy-karsajobs
+      - build-app-karsajobs
 
 # VS Code Extension Version: 1.2.0

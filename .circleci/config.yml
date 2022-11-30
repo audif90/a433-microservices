@@ -12,7 +12,7 @@ jobs:
         command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile 
   build-app-karsajobs-ui:
     docker:
-      - image: cimg/:latest
+      - image: cimg:latest
     steps:
       - checkout
       - setup_remote_docker

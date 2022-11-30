@@ -6,6 +6,7 @@ jobs:
       - image: 'hadolint/hadolint:latest'
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Check Dockerfile
           command: hadolint `find . -type f -name Dockerfile | xargs readlink -f` &> report.json

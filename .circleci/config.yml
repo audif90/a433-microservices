@@ -1,36 +1,65 @@
+# Menggunakan versi 2.1
+
 version: 2.1
 
+
+# List jobs
 jobs:
+
+# Job Pertama - Linting Dockerfile
   lint-dockerfile:
+
+# Menggunakan image docker stable
     docker:
       - image: docker:stable
+
+# Step2 dalam job linting dockerfile. 
     steps:
+
+# Git checkout
     - checkout
+# Setup docker environment
     - setup_remote_docker
+# Running hadolint
     - run:
         name: Run Hadolint
         command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile 
-  build-app-karsajobs-ui:
+
+# Job kedua - Build dan deploy karsajobs ui
+  build-and-deploy-karsajobs-ui:
+
+# Menggunakan image cimg/base 22.04lts
     docker:
       - image: cimg/base:2022.11-22.04
+
+# Step dalam job
     steps:
       - checkout
       - setup_remote_docker
       - run:
+
+# Build docker image
           name: Build docker image
-          command: docker build -t ghcr.io/audif90/karsajobs:latest .
+          command: docker build -t ghcr.io/audif90/karsajobs-ui:latest .
+
+# Authenticate ke GH Packages
       - run:
-          name: Login to GitHub Packages
-          command: docker login ghcr.io -u $USERNAME --password-stdin
+          name: Authenticate to GitHub Packages
+          command: echo "${CR_PAT}" | docker login ghcr.io -u "${USERNAME}" --password-stdin
+
+# Push ke GH Packages
       - run:
           name: Push to GitHub Packages
           command: docker push ghcr.io/audif90/karsajobs-ui:latest
 
 
+# Workflow
 workflows:
+
+# Dalam workflow lint_and_build, ada job linting dockerfile dan building karsajobs
   lint_and_build:
     jobs:
       - lint-dockerfile
-      - build-app-karsajobs-ui
+      - build-and-deploy-karsajobs-ui
 
 # VS Code Extension Version: 1.2.0

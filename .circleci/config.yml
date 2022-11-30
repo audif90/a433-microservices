@@ -40,8 +40,6 @@ workflows:
     jobs:
       - lint-dockerfile
       - test-app
-  build_and_publish:
-    jobs:
       - build-app-karsajobs
 
 # VS Code Extension Version: 1.2.0

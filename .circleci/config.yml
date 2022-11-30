@@ -3,18 +3,13 @@ version: 2.1
 jobs:
   lint-dockerfile:
     docker:
-      - image: 'hadolint/hadolint:latest'
+      - image: hadolint/hadolint:latest
     steps:
       - checkout
       - setup_remote_docker
       - run:
-          name: Check Dockerfile
-          command: hadolint `find . -type f -name Dockerfile | xargs readlink -f` &> report.json
-      - run:
-          name: Print Report
-          command: cat report.json
-          when: on_fail
-
+          name: Run Hadolint
+          command: docker run --rm --interactive hadolint/hadolint:latest < Dockerfile
   test-app:
     docker:
       - image: cimg/go:1.19.3
@@ -33,6 +28,9 @@ jobs:
       - run:
           name: build docker image
           command: docker build -t ghcr.io/audif90/karsajobs:latest .
+      - run:
+          name: Authenticate to GitHub Packages
+          command: echo "${CR_PAT}" | docker login ghcr.io -u "${USERNAME}" --password-stdin
       - run:
           name: push to GitHub Packages
           command: docker push ghcr.io/audif90/karsajobs:latest
